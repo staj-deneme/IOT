@@ -1,0 +1,61 @@
+extends layouts/_layout.jade
+
+block title
+	title Ekle
+
+block content
+	.app-title
+		div
+			h1
+				i.fa.fa-dashboard
+				|  Ekle
+			p Start a beautiful journey here
+
+		ul.app-breadcrumb.breadcrumb
+			li.breadcrumb-item
+				i.fa.fa-home.fa-lg
+			li.breadcrumb-item
+				a(href='#') Ekle
+
+	.row
+		.col-md-6
+			.tile
+				.tile-body 
+					h3 Bina Ekle
+					
+					form(action="/binaEkle", method="post")
+						.form-group
+							label Bina Adı
+							input.form-control(type="text", name="bName")
+						.form-group
+							input.btn.btn-primary.btn-block(type="submit", name="binaEkle", value="Bina Ekle")
+
+
+		.col-md-6
+			.tile
+				.tile-body
+					h3 Kat Ekle
+					
+					form(action="/katEkle", method="post")
+						.form-group
+							label Bina Adı
+							select.form-control(name="bName")
+								each i in buildings
+									option(value="#{i.name}") #{i.name}
+						.form-group
+							label Kaçıncı Kat
+							input.form-control(type="number", name="idF")
+						.form-group
+							input.btn.btn-primary.btn-block(type="submit", name="katEkle", value="Kat Ekle")
+
+		.col-md-6
+			.tile
+				.tile-body
+					h3 Zone Ekle
+					
+					form(action="/zoneEkle", method="post")
+						.form-group
+							label Zone Adı
+							input.form-control(type="text", name="bName")
+						.form-group
+							input.btn.btn-primary.btn-block(type="submit", name="zoneEkle", value="Zone Ekle")
