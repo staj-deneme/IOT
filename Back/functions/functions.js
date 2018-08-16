@@ -69,9 +69,12 @@ function Øs(Øair, Htris, Hve, Øsup, Φia) {
     return Øair * (Htris + Hve) - (Hve - Øsup) - Htris - Φia;
 }
 
-function Øst(Am,HtrWin,Øint) {
-    return Øair * (Htris + Hve) - (Hve - Øsup) - Htris - Φia;
+function Øst(Am,HtrWin,Øint,Atot) {
+    var Øsol;
+    return (1-(Am/Atot)-(HtrWin/(9.1*Atot)))*((0.5*Øint)+Øsol);
 }
+
+
 
 /**
  *  İç yüzey ve kütle arasında ısı geçiş katsayısı
