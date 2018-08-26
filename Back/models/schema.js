@@ -3,63 +3,97 @@ const Schema = mongoose.Schema;
 
 const BuildingSchema = new Schema({
     name:String,
+    ema:Number,//Am(m2) etkin kütle alanı/effective mass area 
+    hcs:Number,//Cm(W*s/K)  yüzeylerin etkin ısı kapasitesi//effective heat capacity of the surfaces 
+    //Katlar
     floors:[{
-        idF:Number,
+        idF:Number,//kat idsi yada isim(1.kat)
+        typeF:String,//Kat tipi( bodrum kat, zemin kat, ara kat, çatı arası)
+    //Zonelar
         zones:[{
-            idZ:Number,
-            wall:{
-                material:String,
-                witdh:Number
-            },
-            floorMat:String,//döşeme
-            windows:Number,
-            properties:{
-                ema:Number,//Am(m2) etkin kütle alanı/effective mass area 
-                hcs:Number,//Cm(W*s/K)  yüzeylerin etkin ısı kapasitesi//effective heat capacity of the surfaces 
-                htc:{//hve hariç hepsi sabit
-                    Hve:Number,Htrwin:Number,Htrop:Number,Htrem:Number,Htris:Number,Htrms:Number
-                } //Hx ısı geçiş katsayıları/heat transfer coefficients        
-            },
-            airCond:[{//klimalar (fad hava debisis)
-                id:Number,
-                heat:Number,//ısı ayarı
-                fad:Number
-            }],
-            devicesI:[{//indüktif(motor)
-                id:Number,
-                output:Number,//çıkış gücü
-                power:Number,//motor gücü
-                efficiency:Number,//verimlilik
-                isOn:Boolean//açıkmı kapalımı?
-                 //ısı kazancı fonk ile hesaplanabilir???
-            }],
-            devicesR:[{//resiztif(elektririkli ısıtıcı)
-                id:Number,
-                output:Number,//çıkış gücü
-                relay:Number,//ağ sistemi yoksa röle tabanlı bir sistem ile algoyla çalışcak
-                isOn:Boolean//açıkmı kapalımı?
-                 //ısı kazancı fonk ile hesaplanabilir???
-            }],
-            heaterR:[{//resiztif
-                id:Number,
-                size:Number,//petek boyutu
-                output:Number,//Çıkış gücü
-                efficiency:Number,//verim
-                heat:Number,//ısıtma su sıcaklığı
-                isOn:Boolean//açıkmı kapalımı?
-                 //ısı kazancı fonk ile hesaplanabilir???
-            }],
-            humans:Number,//insan yoğunluğu
-            lSource:[{//ışık kaynakları
-                id:Number,//id yerine namede olabilir tek çeşit ışık kaynağı varsa sadece id yeterli
-                lds:Number,//röle için ışık yoğunluğu değeri
-                isOn:Boolean//açıkmı kapalımı?
-                //ısı kazancı fonk ile hesaplanabilir???
-            }],
-            ssd:[{
-                ssdVal:Number,//süzme sayac param
-            }],
-            timeinterval:Number
+            idZ:Number,//zon idsi yada isim(1.zon)
+            typeZ:String,//Zon tipi
+            /*  typeZ===
+                üretim alanı, atölye, depo, kişisel ofis (tek kişilik), grup çalışma ofisi (en fazla 6 kişilik),
+                açık ofis (7 ve üstü kişilik), toplantı, seminer ve konferans odası, lobi / giriş holü, 
+                yemekhane, mutfak, tuvalet, yardımcı mekanlar (yaşanmayan odalar,vestiyer odası, arşiv, koridor),
+                sirkülasyon alanları/koridorlar, sunucu odası, bilgisayar merkezi.
+            */
+    //Odalar
+            rooms:[{
+                idR:Number,//room idsi yada ismi
+                neighbors:[],//komşu oda idleri
+                walls:[{//odanın duvarları
+                    typeWall:Number,//tip 1-11 arası sayfa 10
+                    inOut:Boolean,//dış duvar ise true, iç duvar ise false
+                    material:String,
+                    witdh:Number,
+                    length:Number,
+                    height:Number,
+                    //camlar için kullanılcak yöntem?
+                    windowRatio:Number,//duvar pencere oranı
+                    //yada
+                    windows:[{
+                        typeWindow:String,//tek çift üçlü cam
+                        witdh:Number,
+                        length:Number,
+                        ugl:Number,//camın ısı geçrigenlikatsayısı
+                        uf:Number//çerçevenin ısı geçirgenlik katsayısı
+                    }]
+                }],
+                ground:{//döşeme 
+                    material:String,
+                    witdh:Number,
+                    length:Number,
+                    height:Number//pdf 1 sayfa 8
+                },
+                properties:{htc:{//hve hariç hepsi sabit
+                        Hve:Number,Htrwin:Number,Htrop:Number,Htrem:Number,Htris:Number,Htrms:Number
+                    } //Hx ısı geçiş katsayıları/heat transfer coefficients        
+                },
+                airCond:[{//klimalar (fad hava debisis)
+                    id:Number,
+                    heat:Number,//ısı ayarı
+                    fad:Number
+                }],
+                devicesI:[{//indüktif(motor)
+                    id:Number,
+                    output:Number,//çıkış gücü
+                    power:Number,//motor gücü
+                    efficiency:Number,//verimlilik
+                    isOn:Boolean//açıkmı kapalımı?
+                     //ısı kazancı fonk ile hesaplanabilir???
+                }],
+                devicesR:[{//resiztif(elektririkli ısıtıcı)
+                    id:Number,
+                    output:Number,//çıkış gücü
+                    relay:Number,//ağ sistemi yoksa röle tabanlı bir sistem ile algoyla çalışcak
+                    isOn:Boolean//açıkmı kapalımı?
+                     //ısı kazancı fonk ile hesaplanabilir???
+                }],
+                heaterR:[{//resiztif
+                    id:Number,
+                    size:Number,//petek boyutu
+                    output:Number,//Çıkış gücü
+                    efficiency:Number,//verim
+                    heat:Number,//ısıtma su sıcaklığı
+                    isOn:Boolean//açıkmı kapalımı?
+                     //ısı kazancı fonk ile hesaplanabilir???
+                }],
+                humans:Number,//insan yoğunluğu??sayısı
+                lSource:[{//ışık kaynakları sayfa 61-62-63
+                    id:Number,//id yerine namede olabilir tek çeşit ışık kaynağı varsa sadece id yeterli
+                    power:Number,//güç (W)
+                    flow:Number,//ışık akısı(Im)
+                    lds:Number,//röle için ışık yoğunluğu değeri
+                    isOn:Boolean//açıkmı kapalımı?
+                    //ısı kazancı fonk ile hesaplanabilir???
+                }],
+                ssd:[{
+                    ssdVal:Number,//süzme sayac param
+                }],
+                timeinterval:Number
+            }]
         }]
     }],
 });

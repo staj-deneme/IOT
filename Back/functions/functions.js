@@ -236,7 +236,6 @@ function Uopi(tip,yon,bosluk_kal) {
     return 1 / ((1 / hsi) + sum + (1 / hse) + Rgap)
 }
 
-<<<<<<< HEAD
 /* Φia : İç hava sıcaklığına etki eden ısı kazanç miktarı 
 */
 function Φia (){
@@ -249,11 +248,10 @@ function Φia (){
 function ofisΦint (Np,Af,Φintlg){
  var Φintoc = 130*Np
  var ΦintAppunit
- var ΦintApp = Af*
+ //var ΦintApp = Af*
 
 
 }
-=======
 
 
 function Øst(Am,HtrWin,Øint,Atot) {
@@ -401,4 +399,3 @@ function uwin(ugl,uf,tip){
 function Htrms(Am,hms){
     return Am*hms
 }
->>>>>>> 82af53a4d3778b180ca8f21eb51e9fd0972fa327
