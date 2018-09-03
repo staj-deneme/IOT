@@ -1,4 +1,4 @@
-var tablolar = {
+module.exports =  {
     tablo3_1: {
         tip1: { Rsi: 0.13, Rse: 0.04 },
         tip2: { Rsi: 0.13, Rse: 0.08 },
@@ -12,7 +12,7 @@ var tablolar = {
         tip10: { Rsi: 0.13, Rse: 0.13 },
         tip11: { Rsi: 0.13, Rse: 0.04 }
     },
-    tablo3_2 = {
+    tablo3_2: {
         dusey: [
             { min: 0.1, max: 10 ,Rgap:0.14},
             { min: 11, max: 20, Rgap:0.16},
