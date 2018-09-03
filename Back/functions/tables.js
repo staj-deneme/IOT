@@ -1,4 +1,4 @@
-var tablolar = {
+module.exports =  {
     tablo3_1: {
         tip1: { Rsi: 0.13, Rse: 0.04 },
         tip2: { Rsi: 0.13, Rse: 0.08 },
