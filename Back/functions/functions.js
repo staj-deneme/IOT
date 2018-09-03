@@ -178,8 +178,11 @@ function VveD(binaYapiTipi, binaTipi, korunmaTipi, disaBakanYuzey, metrekup) {
 /*Htris: İç yüzey ile iç ortam arasındakı ısı geçis katsayısı -syf:38
 Htris = his*Atot
 his : 3.45 (sabit katsayı)
-Atot : bir zonu çevreleyen tüm iç yüzeylerin alanları toplamı 
 */
+/**
+ * 
+ * @param {*} Atot : bir zonu çevreleyen tüm iç yüzeylerin alanları toplamı
+ */
 function Htris(Atot) {
     const his = 3.45
     return Atot * his
@@ -192,18 +195,24 @@ function Htris(Atot) {
   Ψoi: Doğrusal ısı köprüsü birim uzunluk başına ısı geçiş katsayısı, W/(m*K)
 
  Htrop= Σ Aopi*Uopi + Σ Lopi*Ψoi
-
-  kod: ısı köprüsü tipi (tablo 9.1)
   opbil: opak bileşen dizisi
-*/
-function Htrop(kod) {
-    var Uopi = Uopi();
+  */
+/**
+ * 
+ * @param {*} kod : ısı köprüsü tipi (tablo 9.1)
+ * @param {*} tip : yapı bileşen tipi (tablo 3.1)
+ * @param {*} yon : opak bileşenin yönü (yatay/düşey)
+ * @param {*} bosluk_kal : boşluk kalınlığı
+ */
+function Htrop(kod,tip,yon,bosluk_kal) {
+    var Uopi = Uopi(tip,yon,bosluk_kal);
     var sum= 0
  opbil.forEach(element =>{
      sum += ((element.Aopi)*Uopi) + (element*Lopi)*(tablolar.tablo9_1[kod.Ψoi])
  });
 return sum
 }
+
 
 /*  Uopi: Opak bir bileşenin ısıl geçirgenlik katsayısı - syf:10
 hsi: İç yüzey ısıl taşınım katsayısı, W/(m^2.K)
@@ -213,13 +222,13 @@ dl: l nci malzemenin kalınlığı, m
 Rgap: Opak bileşen malzemeleri arasındaki boşluğun ısıl direnci, m²K/W
 
 Uopi = 1/(1/hsi + Σ dl/λhl + 1/hse +Rgap)
-
-tip: yapı bileşen tipi (tablo 3.1)
-yon: yatay/dusey (tablo 3.2)
-bosluk_kal: boşluk kalınlığı (tablo 3.2)
-malzeme : opak bileşenin oluştuğu malzeme dizisi
 */
-
+/**
+ * 
+ * @param {*} tip : yapı bileşen tipi (tablo 9.1)
+ * @param {*} yon : opak bileşenin yönü (yatay/düşey)
+ * @param {*} bosluk_kal : yapı malzemeleri arasındaki boşluk kalınlığı
+ */
 function Uopi(tip,yon,bosluk_kal) {
     var hsi = 1 / (tablolar.tablo3_1[tip.Rsi])
     var hse = 1 / (tablolar.tablo3_1[tip.Rse])
@@ -231,30 +240,88 @@ function Uopi(tip,yon,bosluk_kal) {
         if(element.min <= bosluk_kal && element.max >=bosluk_kal){
          Rgap = element.Rgap
         }
-
     });
     return 1 / ((1 / hsi) + sum + (1 / hse) + Rgap)
 }
 
-<<<<<<< HEAD
 /* Φia : İç hava sıcaklığına etki eden ısı kazanç miktarı 
 */
-function Φia (){
-    var Φint = ofisΦint(); 
+/**
+ * 
+ * @param {*} bina : bina türü (ofis/fabrika)
+ * @param {*} Np : kişi sayısı
+ * @param {*} Af : zon/ofis alanı
+ * @param {*} Φintlg : aydınlatma aygıtlarından ısı kazancı
+ */
+function Φia (bina,Np,Af,Φintlg){
+    var Φint
+    if (bina=="ofis"){
+     Φint = ofisΦint(Np,Af,Φintlg); 
+    }
+    else if(bina == "fabrika"){
+     Φint = fabrikaΦint(Φintlg); 
+    }
+    
     return 0.5* Φint
 }
 
 /* Ofis binalarında iç kazanç
+Np: kişi sayısı
+Af: ofis döşeme alanı
  */
 function ofisΦint (Np,Af,Φintlg){
  var Φintoc = 130*Np
- var ΦintAppunit
- var ΦintApp = Af*
+ var ΦintAppunit = ofisyogunlugu(Np,Af);
+ var ΦintApp = Af* ΦintAppunit
 
-
+ return  Φintoc +  ΦintApp +  Φintlg
 }
-=======
 
+/**
+ * 
+ * @param {*} Np : kişi sayısı
+ * @param {*} Af : zon/ofis döşeme alanı
+ */
+
+function ofisyogunlugu (Np,Af){
+ var ΦintAppunit
+ var yogunluk
+ if (Af/Np >= 15.5){
+    yogunluk = "Az Yoğun"
+    ΦintAppunit = 5.4
+ }
+ else if (Af/Np >=11.6 || Af/Np < 15.5){
+     yogunluk = "Orta Yoğun"
+     ΦintAppunit = 10.8
+ }
+ else if (Af/Np >=9.3 || Af/Np < 11.6) {
+    yogunluk = "Yoğun"
+    ΦintAppunit= 16.1
+ }
+ else {
+     yogunluk = "Çok Yoğun"
+     ΦintAppunit = 21.5
+ }
+ return ΦintAppunit
+}
+/* Np: kişi sayısı
+   Af: Zonun döşeme alanı
+*/
+function  fabrikaΦint (Φintlg, Np, Af) {
+   const ΦintOcsen = 3.6
+   const ΦintOclat = 2.6
+   var ΦintApp = 0
+   var alan = 0
+
+   zones.forEach(element =>{
+       var Af = zones.rooms.forEach(element =>{alan += rooms.width*rooms.length})
+       var ΦintAppunit = ofisyogunlugu(Np,Af);
+       ΦintApp += Af*ΦintAppunit
+   })
+   var Φint = (Np*(ΦintOcsen+ΦintOclat)) + ΦintApp + Φintlg
+   
+   return Φint
+}
 
 function Øst(Am,HtrWin,Øint,Atot) {
     var Øsol;
@@ -401,4 +468,3 @@ function uwin(ugl,uf,tip){
 function Htrms(Am,hms){
     return Am*hms
 }
->>>>>>> 82af53a4d3778b180ca8f21eb51e9fd0972fa327
