@@ -271,8 +271,14 @@ Af: ofis döşeme alanı
  */
 function ofisΦint (Np,Af,Φintlg){
  var Φintoc = 130*Np
+<<<<<<< HEAD
  var ΦintAppunit = ofisyogunlugu(Np,Af);
  var ΦintApp = Af* ΦintAppunit
+=======
+ var ΦintAppunit
+ //var ΦintApp = Af*
+
+>>>>>>> origin/Emre
 
  return  Φintoc +  ΦintApp +  Φintlg
 }
