@@ -1,4 +1,4 @@
-var tablolar23 = require("./tables");
+var tablolar = require("./tables");
 
 function Øopr(Øs, Øair) {
     return 0.7 * Øs + 0.3 * Øair
@@ -7,85 +7,7 @@ function Øopr(Øs, Øair) {
 function Øs(Øair, Htris, Hve, Øsup, Φia) {
     return Øair * (Htris + Hve) - (Hve - Øsup) - Htris - Φia
 }
-var tablolar = {
-
-    tablo_1_10: [{
-        name: "Duvarlarda çatlak, kapı ve pencere yok",
-        value: 0
-    }, {
-        name: "Duvarlarda çatlak yok, kapı ve pencerelerin sızdırmazlığı yüksek ",
-        value: 0.5
-    }, {
-        name: "Duvarlarda çatlak çok az ",
-        value: 1
-    }, {
-        name: "Hava sızdırmazlığı orta seviyede ",
-        value: 3
-    }, {
-        name: "Hava sızdırmazlığı çok kötü ",
-        value: 10
-    }],
-    //Hava sızdırmazlık seviyeleri Tablosu
-    tablo_1_12: {
-        diger: function (deger) {
-            if (deger < 2) {
-                return "yuksek";
-            } else if (deger >= 2 && deger <= 5) {
-                return "orta";
-            } else {
-                return "dusuk";
-            }
-        },
-        mustakil: function (deger) {
-            if (deger < 4) {
-                return "yuksek";
-            } else if (deger >= 4 && deger <= 10) {
-                return "orta";
-            } else {
-                return "dusuk";
-            }
-        }
-    },
-    // Apartmanlar, ofisler ve diğer bina tipolojilerinde doğal havalandırma hava değişim sayısı Tablosu
-    tablo_1_13: {
-        korunmasiz: {
-            cokYuzey: {
-                dusuk: 1.2,
-                orta: 0.7,
-                yuksek: 0.5
-            },
-            tekYuzey: {
-                dusuk: 1,
-                orta: 0.6,
-                yuksek: 0.5
-            }
-        },
-        hafifKorunmali: {
-            cokYuzey: {
-                dusuk: 0.9,
-                orta: 0.6,
-                yuksek: 0.5
-            },
-            tekYuzey: {
-                dusuk: 0.7,
-                orta: 0.5,
-                yuksek: 0.5
-            }
-        },
-        tamKorunmali: {
-            cokYuzey: {
-                dusuk: 0.6,
-                orta: 0.5,
-                yuksek: 0.5
-            },
-            tekYuzey: {
-                dusuk: 0.5,
-                orta: 0.5,
-                yuksek: 0.5
-            }
-        }
-    }
-};
+    
 /**
  *  İç yüzey ve kütle arasında ısı geçiş katsayısı
  *  Htr,ms = hms . Am
@@ -242,8 +164,8 @@ his : 3.45 (sabit katsayı)
  * @param {*} Atot : bir zonu çevreleyen tüm iç yüzeylerin alanları toplamı
  */
 function Htris(Atot) {
-    const his = 3.45
-    return Atot * his
+    const his = 3.45;
+    return Atot * his;
 }
 
 /* Htrop: Zonu çevreleyen opak yüzeylerin iletim ve taşınım ısı geçiş katsayısı -syf:10
@@ -264,11 +186,11 @@ function Htris(Atot) {
  */
 function Htrop(kod, tip, yon, bosluk_kal) {
     var Uopi = Uopi(tip, yon, bosluk_kal);
-    var sum = 0
+    var sum = 0;
     opbil.forEach(element => {
-        sum += ((element.Aopi) * Uopi) + (element * Lopi) * (tablolar.tablo9_1[kod.Ψoi])
+        sum += ((element.Aopi) * Uopi) + (element * Lopi) * (tablolar.tablo9_1[kod.Ψoi]);
     });
-    return sum
+    return sum;
 }
 
 
@@ -278,28 +200,27 @@ hse: Dış yüzey ısı taşınım katsayısı, W/(m^2.K)
 dl: l nci malzemenin kalınlığı, m 
 λhl: l nci malzemenin ısıl iletkenlik hesap değeri, W/(m.K)
 Rgap: Opak bileşen malzemeleri arasındaki boşluğun ısıl direnci, m²K/W
-
+sum : Σ dl/λhl
 Uopi = 1/(1/hsi + Σ dl/λhl + 1/hse +Rgap)
 */
-/**
- * 
+/** 
  * @param {*} tip : yapı bileşen tipi (tablo 9.1)
  * @param {*} yon : opak bileşenin yönü (yatay/düşey)
  * @param {*} bosluk_kal : yapı malzemeleri arasındaki boşluk kalınlığı
  */
 function Uopi(tip, yon, bosluk_kal) {
-    var hsi = 1 / (tablolar.tablo3_1[tip.Rsi])
-    var hse = 1 / (tablolar.tablo3_1[tip.Rse])
-    var sum = 0
+    var hsi = 1 / (tablolar.tablo3_1[tip.Rsi]);
+    var hse = 1 / (tablolar.tablo3_1[tip.Rse]);
+    var sum = 0;
     opbil.malzeme.forEach(element => {
-        sum += (element.dl / element.λhl)
+        sum += (element.dl / element.λhl);
     });
     tablolar.tablo3_2[yon].forEach(element => {
         if (element.min <= bosluk_kal && element.max >= bosluk_kal) {
-            Rgap = element.Rgap
+            Rgap = element.Rgap;
         }
     });
-    return 1 / ((1 / hsi) + sum + (1 / hse) + Rgap)
+    return 1 / ((1 / hsi) + sum + (1 / hse) + Rgap);
 }
 
 /* Φia : İç hava sıcaklığına etki eden ısı kazanç miktarı 
@@ -320,7 +241,7 @@ function Φia(bina, Np, Af, Φintlg) {
         Φint = fabrikaΦint(Φintlg);
     }
 
-    return 0.5 * Φint
+    return 0.5 * Φint;
 }
 
 /* Ofis binalarında iç kazanç
@@ -328,11 +249,11 @@ Np: kişi sayısı
 Af: ofis döşeme alanı
  */
 function ofisΦint(Np, Af, Φintlg) {
-    var Φintoc = 130 * Np
+    var Φintoc = 130 * Np;
     var ΦintAppunit = ofisyogunlugu(Np, Af);
-    var ΦintApp = Af * ΦintAppunit
+    var ΦintApp = Af * ΦintAppunit;
 
-    return Φintoc + ΦintApp + Φintlg
+    return Φintoc + ΦintApp + Φintlg;
 }
 
 /**
@@ -360,7 +281,7 @@ function ofisyogunlugu(Np, Af) {
         yogunluk = "Çok Yoğun"
         ΦintAppunit = 21.5
     }
-    return ΦintAppunit
+    return ΦintAppunit;
 }
 /* Np: kişi sayısı
    Af: Zonun döşeme alanı
@@ -372,13 +293,13 @@ function fabrikaΦint(Φintlg, Np, Af) {
     var alan = 0
 
     zones.forEach(element => {
-        var Af = zones.rooms.forEach(element => { alan += rooms.width * rooms.length })
+        var Af = zones.rooms.forEach(element => { alan += rooms.width * rooms.length });
         var ΦintAppunit = ofisyogunlugu(Np, Af);
-        ΦintApp += Af * ΦintAppunit
+        ΦintApp += Af * ΦintAppunit;
     })
-    var Φint = (Np * (ΦintOcsen + ΦintOclat)) + ΦintApp + Φintlg
+    var Φint = (Np * (ΦintOcsen + ΦintOclat)) + ΦintApp + Φintlg;
 
-    return Φint
+    return Φint;
 }
 
 function Øst(Am, HtrWin, Øint, Atot) {

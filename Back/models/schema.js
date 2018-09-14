@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const BuildingSchema = new Schema({
+    buildingId:Number,
     name:String,
     ema:Number,//Am(m2) etkin kütle alanı/effective mass area 
     hcs:Number,//Cm(W*s/K)  yüzeylerin etkin ısı kapasitesi//effective heat capacity of the surfaces 
@@ -19,7 +20,8 @@ const BuildingSchema = new Schema({
                 yemekhane, mutfak, tuvalet, yardımcı mekanlar (yaşanmayan odalar,vestiyer odası, arşiv, koridor),
                 sirkülasyon alanları/koridorlar, sunucu odası, bilgisayar merkezi.
             */
-    //Odalar
+
+            //Odalar
             rooms:[{
                 idR:Number,//room idsi yada ismi
                 neighbors:[],//komşu oda idleri
@@ -27,7 +29,7 @@ const BuildingSchema = new Schema({
                     typeWall:Number,//tip 1-11 arası sayfa 10
                     inOut:Boolean,//dış duvar ise true, iç duvar ise false
                     material:String,
-                    witdh:Number,
+                    width:Number,
                     length:Number,
                     height:Number,
                     //camlar için kullanılcak yöntem?
@@ -35,7 +37,7 @@ const BuildingSchema = new Schema({
                     //yada
                     windows:[{
                         typeWindow:String,//tek çift üçlü cam
-                        witdh:Number,
+                        width:Number,
                         length:Number,
                         ugl:Number,//camın ısı geçrigenlikatsayısı
                         uf:Number//çerçevenin ısı geçirgenlik katsayısı
@@ -43,7 +45,7 @@ const BuildingSchema = new Schema({
                 }],
                 ground:{//döşeme 
                     material:String,
-                    witdh:Number,
+                    width:Number,
                     length:Number,
                     height:Number//pdf 1 sayfa 8
                 },
@@ -81,14 +83,20 @@ const BuildingSchema = new Schema({
                      //ısı kazancı fonk ile hesaplanabilir???
                 }],
                 humans:Number,//insan yoğunluğu??sayısı
-                lSource:[{//ışık kaynakları sayfa 61-62-63
+                  //Işık kaynakları syf 61-62-63
+                lSource:[{
                     id:Number,//id yerine namede olabilir tek çeşit ışık kaynağı varsa sadece id yeterli
+                    name:String, //lamba türü ismi
+                    armaturetype:String, //armatür tipi
+                    condition:String, // armatürün ortam şartları (temiz/normal/kirli)
                     power:Number,//güç (W)
                     flow:Number,//ışık akısı(Im)
+                    energyEf:String, // enerji sınıfı
+                    n:Number,// lamba sayısı
                     lds:Number,//röle için ışık yoğunluğu değeri
                     isOn:Boolean//açıkmı kapalımı?
-                    //ısı kazancı fonk ile hesaplanabilir???
-                }],
+               //ısı kazancı fonk ile hesaplanabilir???
+               }],
                 ssd:[{
                     ssdVal:Number,//süzme sayac param
                 }],
